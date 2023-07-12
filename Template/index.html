@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Car Price Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            width: 400px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Car Price Prediction</h1>
+    <form id="carForm">
+        <label for="age">Age of the Car:</label>
+        <input type="text" id="age" name="age" required><br><br>
+
+        <label for="fuelType">Fuel Type:</label>
+        <select id="fuelType" name="fuelType" required>
+            {% for fuelType in fuelTypes %}
+                <option value="{{ fuelType }}">{{ fuelType }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="sellerType">Seller Type:</label>
+        <select id="sellerType" name="sellerType" required>
+            {% for sellerType in sellerTypes %}
+                <option value="{{ sellerType }}">{{ sellerType }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="transmission">Transmission:</label>
+        <select id="transmission" name="transmission" required>
+            {% for transmission in transmissions %}
+                <option value="{{ transmission }}">{{ transmission }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="owner">Owner:</label>
+        <select id="owner" name="owner" required>
+            {% for owner in owners %}
+                <option value="{{ owner }}">{{ owner }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="kmsDriven">Kilometers Driven:</label>
+        <input type="text" id="kmsDriven" name="kmsDriven" required><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+    document.getElementById("carForm").addEventListener("submit", function(e) {
+        e.preventDefault(); // Prevent form submission
+        const formData = new FormData(this);
+
+        // Convert form data to JSON
+        const jsonData = {};
+        for (const [key, value] of formData.entries()) {
+            jsonData[key] = value;
+        }
+
+        // Send the JSON data to the API endpoint
+        fetch('/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Display the predicted price
+            document.getElementById("result").innerText = "Predicted Price: " + data.predicted_price;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+    </script>
+
+</body>
+</html>
